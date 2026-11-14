@@ -3,165 +3,130 @@ package com.musicstar.app
 
 import android.app.Activity
 import android.os.Bundle
-import android.webkit.WebChromeClient
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.graphics.Color
+import android.view.Gravity
+import android.view.ViewGroup
+import android.widget.*
+import android.graphics.Typeface
 
 class MainActivity : Activity() {
-    private lateinit var webView: WebView
 
-    @Suppress("SetJavaScriptEnabled")
+    private val bg = Color.rgb(15, 15, 25)
+    private val purple = Color.rgb(130, 75, 255)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        webView = WebView(this)
-        webView.settings.javaScriptEnabled = true
-        webView.settings.domStorageEnabled = true
-        webView.settings.mediaPlaybackRequiresUserGesture = true
-        webView.webViewClient = WebViewClient()
-        webView.webChromeClient = WebChromeClient()
+        window.statusBarColor = bg
+        window.navigationBarColor = bg
 
-        setContentView(webView)
+        val root = LinearLayout(this)
+        root.orientation = LinearLayout.VERTICAL
+        root.setPadding(20, 25, 20, 15)
+        root.setBackgroundColor(bg)
 
-        webView.loadDataWithBaseURL(
-            "https://musicstar.app/",
-            """
-            <!DOCTYPE html>
-            <html>
-            <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <style>
-            body {
-                background:#10101b;
-                color:white;
-                font-family:Arial;
-                text-align:center;
-                padding:15px;
-            }
-            h1 {color:#ffcc33;}
-            .btn {
-                background:#28283e;
-                color:white;
-                border:1px solid #555;
-                padding:15px;
-                margin:6px;
-                border-radius:12px;
-                font-size:16px;
-                width:90%;
-            }
-            input {
-                width:85%;
-                padding:14px;
-                border-radius:10px;
-                border:0;
-                margin:12px 0;
-                font-size:16px;
-            }
-            .play {
-                background:#e91e63;
-                color:white;
-                border:0;
-                padding:14px;
-                border-radius:10px;
-                width:90%;
-                font-size:16px;
-            }
-            </style>
-            </head>
-            <body>
+        val scroll = ScrollView(this)
+        val content = LinearLayout(this)
+        content.orientation = LinearLayout.VERTICAL
 
-            <h1>🎵 MUSIC STAR</h1>
-            <p>Music • Videos • Movies</p>
+        val title = TextView(this)
+        title.text = "🎵 MUSIC STAR"
+        title.textSize = 30f
+        title.typeface = Typeface.DEFAULT_BOLD
+        title.gravity = Gravity.CENTER
+        title.setTextColor(Color.WHITE)
+        content.addView(title)
 
-            <input id="search"
-            placeholder="Search Song, Video or Movie">
+        val subtitle = TextView(this)
+        subtitle.text = "Your Music, Your World"
+        subtitle.gravity = Gravity.CENTER
+        subtitle.textSize = 14f
+        subtitle.setTextColor(Color.LTGRAY)
+        content.addView(subtitle)
 
-            <button class="play" onclick="searchMusic()">
-            🔍 Search
-            </button>
+        val search = EditText(this)
+        search.hint = "🔍 गाना, कलाकार या मूवी खोजें"
+        search.setSingleLine(true)
+        search.setTextColor(Color.WHITE)
+        search.setHintTextColor(Color.LTGRAY)
+        search.setPadding(15, 12, 15, 12)
+        search.setBackgroundColor(Color.rgb(40, 40, 55))
+        content.addView(search)
 
-            <h3>Choose Your Entertainment</h3>
+        addHeading(content, "🔥 Explore Music")
 
-            <button class="btn" onclick="music()">
-            🎵 Music
-            </button>
+        addCategory(content, "🎧 Bollywood Songs")
+        addCategory(content, "🎶 Bhojpuri Songs")
+        addCategory(content, "🎤 Punjabi Songs")
+        addCategory(content, "🎼 Hindi Songs")
 
-            <button class="btn" onclick="videos()">
-            🎬 Video Songs
-            </button>
+        addHeading(content, "📺 Video Songs")
+        addCategory(content, "▶ Watch Music Videos")
 
-            <button class="btn" onclick="movies()">
-            🍿 Movies
-            </button>
+        addHeading(content, "🎬 Movies")
+        addCategory(content, "🍿 Free & Legal Movies")
 
-            <h3>Music Categories</h3>
+        addHeading(content, "🎵 Music Player")
 
-            <button class="btn" onclick="category('Hindi songs')">
-            🇮🇳 Hindi
-            </button>
+        val now = TextView(this)
+        now.text = "Select a song to start listening"
+        now.textSize = 16f
+        now.gravity = Gravity.CENTER
+        now.setTextColor(Color.WHITE)
+        now.setPadding(10, 20, 10, 20)
+        content.addView(now)
 
-            <button class="btn" onclick="category('Bhojpuri songs')">
-            Bhojpuri
-            </button>
+        val controls = LinearLayout(this)
+        controls.gravity = Gravity.CENTER
 
-            <button class="btn" onclick="category('Punjabi songs')">
-            Punjabi
-            </button>
-
-            <button class="btn" onclick="category('Bollywood songs')">
-            Bollywood
-            </button>
-
-            <script>
-            function go(url) {
-                window.location.href = url;
-            }
-
-            function music() {
-                go('https://music.youtube.com/');
-            }
-
-            function videos() {
-                go('https://www.youtube.com/results?search_query=Hindi+video+songs');
-            }
-
-            function movies() {
-                go('https://archive.org/details/feature_films');
-            }
-
-            function category(name) {
-                go('https://www.youtube.com/results?search_query='
-                + encodeURIComponent(name));
-            }
-
-            function searchMusic() {
-                var q = document.getElementById('search').value;
-                if(q.trim() == '') return;
-                go('https://www.youtube.com/results?search_query='
-                + encodeURIComponent(q));
-            }
-            </script>
-
-            </body>
-            </html>
-            """.trimIndent(),
-            "text/html",
-            "UTF-8",
-            null
-        )
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        webView.saveState(outState)
-        super.onSaveInstanceState(outState)
-    }
-
-    @Deprecated("Deprecated in Android API")
-    override fun onBackPressed() {
-        if (::webView.isInitialized && webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            super.onBackPressed()
+        for (label in listOf("⏮", "▶", "⏭")) {
+            val button = Button(this)
+            button.text = label
+            controls.addView(button)
         }
+
+        content.addView(controls)
+
+        val footer = TextView(this)
+        footer.text = "MUSIC STAR • Free Music Experience"
+        footer.gravity = Gravity.CENTER
+        footer.setTextColor(Color.GRAY)
+        footer.setPadding(10, 30, 10, 10)
+        content.addView(footer)
+
+        scroll.addView(content)
+        root.addView(scroll)
+        setContentView(root)
+    }
+
+    private fun addHeading(
+        layout: LinearLayout,
+        text: String
+    ) {
+        val heading = TextView(this)
+        heading.text = text
+        heading.textSize = 21f
+        heading.typeface = Typeface.DEFAULT_BOLD
+        heading.setTextColor(Color.WHITE)
+        heading.setPadding(0, 25, 0, 12)
+        layout.addView(heading)
+    }
+
+    private fun addCategory(
+        layout: LinearLayout,
+        text: String
+    ) {
+        val button = Button(this)
+        button.text = text
+        button.textSize = 16f
+        button.setTextColor(Color.WHITE)
+        button.setBackgroundColor(purple)
+
+        val params = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        params.bottomMargin = 8
+        layout.addView(button, params)
     }
 }
