@@ -1,4 +1,3 @@
-
 package com.musicstar.app
 
 import android.app.Activity
